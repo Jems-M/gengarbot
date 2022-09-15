@@ -32,8 +32,6 @@ public class BotCommands extends ListenerAdapter {
             }
 
 
-
-
         } else if (event.getName().equals("spawnchannel")){
 
             if (event.getGuild() != null) {
@@ -57,6 +55,9 @@ public class BotCommands extends ListenerAdapter {
 
 
         } else if (event.getName().equals("catch")) {
+            // SQLIntegrityConstraintViolationException if not registered - add a check for this
+            // TODO: Find out what kind of error is produced when an unregistered user runs /catch, and put a try-catch for an error message
+            // "You haven't registered yet! Do /start to begin!"
 
             OptionMapping option = event.getOption("name");
             if (option == null) {
@@ -90,6 +91,15 @@ public class BotCommands extends ListenerAdapter {
                 event.reply("I can't find a pokemon in this channel :(").queue();
             }
             // Congratulations! You caught a level ?? <name>! (Added to Pokedex.)
+            // TODO: calculate levels properly on-catch, and display them in the catch message.
+
+        } else if (event.getName().equals("info")) {
+            /*
+            Eventually, this will be "info latest", to show the latest one, or "info <number>" to get a specific one
+            Or just "info" to get your buddy pokemon. For now, it just gets the latest.
+             */
+
+
 
         }
     }

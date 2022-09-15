@@ -134,4 +134,22 @@ public class DBHandler {
 
     }
 
+    /*
+    public static boolean getLatestPokemon(String discordID) {
+        try {
+            Connection connection = getDatabaseConnection();
+            Statement statement = connection.createStatement();
+            String query = "SELECT MAX(timeCaught), nickname, shiny, mega, megaY, " +
+                    "gMax, level, nature, originalTrainerID, holding, " +
+                    "hpEV, hpIV, attackEV, attackIV, defenseEV, defenseIV, speedEV, speedIV, " +
+                    "move1, move2, move3, move4 FROM Pokemon WHERE trainerDiscordID = 219861850089717770";
+
+            statement.executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+     */
+
 }
