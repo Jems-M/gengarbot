@@ -25,7 +25,7 @@ public class PokemonInfoCalculator {
         int quarterEv = (int) Math.floor((float) ev / 4);
         double stat = ((2 * base) + iv + quarterEv) * level;
         if (natureBoosted) {
-            stat = Math.floor(stat / 100 * 1.1) ;
+            stat = Math.floor((Math.floor(stat / 100) + 5) * 1.1) ;
         } else {
             stat = Math.floor(stat / 100);
         }
