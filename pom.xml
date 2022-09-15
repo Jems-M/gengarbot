@@ -12,5 +12,19 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
-    
+
+    <dependencies>
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>5.0.0-alpha.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.oscar0812</groupId>
+            <artifactId>pokeapi</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+    </dependencies>
+
 </project>
