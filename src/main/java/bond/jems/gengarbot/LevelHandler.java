@@ -83,7 +83,6 @@ public class LevelHandler {
             System.out.println("Couldn't find a file");
         }
 
-        System.out.println("Built XP lookup table");
 
     }
 

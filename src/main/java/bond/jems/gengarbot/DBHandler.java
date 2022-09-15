@@ -2,7 +2,11 @@ package bond.jems.gengarbot;
 
 import com.github.oscar0812.pokeapi.models.pokemon.Pokemon;
 import com.github.oscar0812.pokeapi.models.pokemon.PokemonAbility;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Channel;
+import net.dv8tion.jda.api.entities.TextChannel;
 
+import javax.annotation.Nonnull;
 import java.sql.*;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -19,6 +23,7 @@ public class DBHandler {
 
     /**
      * Inserts a new trainer into the database.
+     *
      * @param discordID the discord ID of the new user
      * @return true if successful, false if not
      * @throws SQLException if it can't connect to the database
@@ -49,10 +54,11 @@ public class DBHandler {
 
     /**
      * Inserts a new pokemon into the database.
+     *
      * @param trainerDiscordID discord ID of the person who owns the pokemon
-     * @param dexNumber dex number of the pokemon
-     * @param level level of the pokemon
-     * @param shiny whether the pokemon is shiny
+     * @param dexNumber        dex number of the pokemon
+     * @param level            level of the pokemon
+     * @param shiny            whether the pokemon is shiny
      * @return true if successful, false if not
      */
     public static boolean newPokemon(String trainerDiscordID, int dexNumber, int level, boolean shiny) throws SQLIntegrityConstraintViolationException {
@@ -73,7 +79,7 @@ public class DBHandler {
         // not like being an enum gives a significant advantage here anyway
         Nature enumNature = Nature.values()[new Random().nextInt(Nature.values().length)];
         String nature = enumNature.name();
-        nature = nature.substring(0,1).toUpperCase() + nature.substring(1).toLowerCase();
+        nature = nature.substring(0, 1).toUpperCase() + nature.substring(1).toLowerCase();
 
         int female = -1;
         int genderRate = newPokemon.getSpecies().getGenderRate();
@@ -118,12 +124,13 @@ public class DBHandler {
                     "level, shiny, nature, sex, ability, terraType, happiness, characteristic, " +
                     "hpIV, attackIV, defenseIV, spAtkIV, spDefIV, speedIV) VALUES " +
                     "('" + trainerDiscordID + "', '" + originalTrainerID + "', '" + timeCaught + "', '" + dexNumber +
-                    "', '" + level  + "', '" + shinyInt + "', '" + nature + "', '" + female + "', '" + abilityName +
+                    "', '" + level + "', '" + shinyInt + "', '" + nature + "', '" + female + "', '" + abilityName +
                     "', '" + terraType + "', '" + happiness + "', '" + characteristic + "', '" + hpIV + "', '" +
                     attackIV + "', '" + defenseIV + "', '" + spAtkIV + "', '" + spDefIV + "', '" + speedIV + "')";
 
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
+            connection.close();
 
 
             return true;
@@ -151,5 +158,78 @@ public class DBHandler {
         }
     }
      */
+
+
+    public static boolean setSpawnChannel(String guildID, String channelID) {
+        try {
+            Connection connection = getDatabaseConnection();
+            Statement statement = connection.createStatement();
+            String query = "UPDATE `Guild` SET `spawnChannelID` = '" + channelID + "' WHERE `Guild`.`guildID` = '" + guildID + "'";
+            statement.executeUpdate(query);
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+
+    public static boolean newGuild(String guildID) {
+        try {
+            Connection connection = getDatabaseConnection();
+            Statement statement = connection.createStatement();
+            String query = "INSERT INTO Guild (guildID) VALUES (" + guildID + ")";
+            statement.executeUpdate(query);
+            System.out.println("Joined new guild: " + guildID);
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean buildSpawnChannelCache() {
+
+        try {
+            Connection connection = getDatabaseConnection();
+            Statement statement = connection.createStatement();
+            String query = "SELECT guildID, spawnChannelID FROM `Guild`";
+            ResultSet resultSet = statement.executeQuery(query);
+
+            ArrayList<String> guildIDList = new ArrayList<>();
+            ArrayList<String> spawnChannelIDList = new ArrayList<>();
+
+            while (resultSet.next()) {
+                guildIDList.add(resultSet.getString("guildID"));
+                spawnChannelIDList.add(resultSet.getString("spawnChannelID"));
+            }
+
+            /*
+            for (int i = 0; i < spawnChannelIDList.size(); i++) {
+                if (spawnChannelIDList.get(i) == null) {
+                    spawnChannelIDList.set(i, "None");
+                }
+            }
+            */
+
+            for (int i = 0; i < guildIDList.size(); i++) {
+                if (spawnChannelIDList.get(i) != null) {
+                    TextChannel channel = GengarBot.getJda().getTextChannelById(spawnChannelIDList.get(i));
+                    GengarBot.setSpawnChannel(guildIDList.get(i), channel);
+                }
+
+            }
+            connection.close();
+            //System.out.println("");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+
+        return true;
+    }
 
 }

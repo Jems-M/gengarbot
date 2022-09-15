@@ -1,11 +1,13 @@
 package bond.jems.listeners;
 
 import bond.jems.gengarbot.ChatEncounter;
+import bond.jems.gengarbot.DBHandler;
 import bond.jems.gengarbot.GengarBot;
 import com.github.oscar0812.pokeapi.models.pokemon.Pokemon;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Channel;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -63,5 +65,10 @@ public class BotListeners extends ListenerAdapter {
             }
         }
 
+    }
+
+    @Override
+    public void onGuildJoin(@NotNull GuildJoinEvent event) {
+        DBHandler.newGuild(event.getGuild().getId());
     }
 }

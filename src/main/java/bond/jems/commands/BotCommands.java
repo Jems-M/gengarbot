@@ -38,6 +38,7 @@ public class BotCommands extends ListenerAdapter {
             if (event.getGuild() != null) {
                 String guildID = event.getGuild().getId();
                 GengarBot.setSpawnChannel(guildID, event.getTextChannel());
+                DBHandler.setSpawnChannel(guildID, event.getTextChannel().getId());
                 event.reply("Redirected this server's pokemon spawns to this channel!").queue();
 
             } else {

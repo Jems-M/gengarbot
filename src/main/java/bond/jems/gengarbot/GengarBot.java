@@ -17,6 +17,8 @@ import java.util.Random;
 public class GengarBot {
     static Random rand = new Random();
 
+    static JDA jda;
+
     private static String dbUrl;
     private static String dbUsername;
     private static String dbPassword;
@@ -47,27 +49,33 @@ public class GengarBot {
 
     public static void main(String[] args) throws LoginException, InterruptedException {
         String token = args[0];
-        JDA bot = JDABuilder.createDefault(token)
+        dbUrl = args[1];
+        dbUsername = args[2];
+        dbPassword = args[3];
+        jda = JDABuilder.createDefault(token)
                 .setActivity(Activity.playing("with your (poke)balls"))
                 .addEventListeners(new BotCommands(), new BotListeners())
                 .build().awaitReady();
 
-        bot.upsertCommand("start", "Starts your pokemon-catching career").queue();
+        jda.upsertCommand("start", "Starts your pokemon-catching career").queue();
 
-        bot.upsertCommand("catch", "Catches the latest pokemon in the channel.")
+        jda.upsertCommand("catch", "Catches the latest pokemon in the channel.")
                 .addOption(OptionType.STRING, "name", "The name of the pokemon you're trying to catch.", true)
                 .queue();
 
-        bot.upsertCommand("spawnchannel", "Designates this channel as the one where pokemon will spawn.")
+        jda.upsertCommand("spawnchannel", "Designates this channel as the one where pokemon will spawn.")
+                .queue();
+
+        jda.upsertCommand("removespawnchannel", "Lets pokemon spawn anywhere.")
                 .queue();
 
         LevelHandler.buildXpLookupTable();
         PokemonInfoCalculator.buildCharacteristicLookup();
+        DBHandler.buildSpawnChannelCache();
+    }
 
-        dbUrl = args[1];
-        dbUsername = args[2];
-        dbPassword = args[3];
-
+    public static JDA getJda() {
+        return jda;
     }
 
     public static void updateLatestEncounter(String channelID, ChatEncounter encounter) {
