@@ -55,7 +55,7 @@ public class DBHandler {
      * @param shiny whether the pokemon is shiny
      * @return true if successful, false if not
      */
-    public static boolean newPokemon(String trainerDiscordID, int dexNumber, int level, boolean shiny) {
+    public static boolean newPokemon(String trainerDiscordID, int dexNumber, int level, boolean shiny) throws SQLIntegrityConstraintViolationException {
         Pokemon newPokemon = Pokemon.getById(dexNumber);
 
         String originalTrainerID = trainerDiscordID; //useless right now, will be useful when trading is added

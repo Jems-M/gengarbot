@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.Normalizer;
 import java.util.Objects;
 
@@ -81,7 +82,13 @@ public class BotCommands extends ListenerAdapter {
                     event.reply("Congratulations! You caught " + actualNameCap + "!").queue();
 
                     String discordID = event.getUser().getId();
-                    DBHandler.newPokemon(discordID, pokemonID, 10, shiny);
+
+                    try {
+                        DBHandler.newPokemon(discordID, pokemonID, 10, shiny);
+                    } catch (SQLIntegrityConstraintViolationException e) {
+                        event.reply("You haven't registered yet! Do /start to start catching pokemon!").queue();
+                    }
+
 
                     GengarBot.clearLatestEncounter(event.getChannel().getId());
                 } else {
