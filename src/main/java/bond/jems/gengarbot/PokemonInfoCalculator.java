@@ -1,8 +1,10 @@
 package bond.jems.gengarbot;
 
+import com.github.oscar0812.pokeapi.models.pokemon.Nature;
+
 import java.util.HashMap;
 
-public class CharacteristicCalculator {
+public class PokemonInfoCalculator {
 
     private static HashMap<Integer, String> hpCharacteristics = new HashMap<>();
     private static HashMap<Integer, String> attackCharacteristics = new HashMap<>();
@@ -10,6 +12,27 @@ public class CharacteristicCalculator {
     private static HashMap<Integer, String> spAtkCharacteristics = new HashMap<>();
     private static HashMap<Integer, String> spDefCharacteristics = new HashMap<>();
     private static HashMap<Integer, String> speedCharacteristics = new HashMap<>();
+
+    public static int calculateHPStat(int base, int iv, int ev, int level) {
+        int quarterEv = (int) Math.floor((float) ev / 4);
+        double stat = ((2 * base) + iv + quarterEv) * level;
+        stat = Math.floor(stat / 100) + level + 10;
+
+        return (int) stat;
+    }
+
+    public static int calculateStat(int base, int iv, int ev, int level, boolean natureBoosted) {
+        int quarterEv = (int) Math.floor((float) ev / 4);
+        double stat = ((2 * base) + iv + quarterEv) * level;
+        if (natureBoosted) {
+            stat = Math.floor(stat / 100 * 1.1) ;
+        } else {
+            stat = Math.floor(stat / 100);
+        }
+
+
+        return (int) stat;
+    }
 
     public static void buildCharacteristicLookup() {
         hpCharacteristics.put(1, "Loves to eat");

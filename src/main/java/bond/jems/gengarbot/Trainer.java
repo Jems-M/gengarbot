@@ -3,7 +3,6 @@ package bond.jems.gengarbot;
 import java.util.ArrayList;
 
 public class Trainer {
-    //private double trainerID;
     private double discordID;
 
     private double balance; //how much cash money u got
@@ -13,17 +12,6 @@ public class Trainer {
     private boolean isEvTraining;
 
     private ArrayList<CaughtPokemon> pokemonBox;
-
-    /*
-    public double getTrainerID() {
-        return trainerID;
-    }
-
-    public void setTrainerID(double trainerID) {
-        this.trainerID = trainerID;
-    }
-
-     */
 
     public double getDiscordID() {
         return discordID;

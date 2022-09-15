@@ -9,6 +9,14 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class DBHandler {
+
+    public static Connection getDatabaseConnection() throws SQLException {
+        String url = GengarBot.getDbUrl();
+        String username = GengarBot.getDbUsername();
+        String password = GengarBot.getDbPassword();
+        return DriverManager.getConnection(url, username, password);
+    }
+
     /**
      * Inserts a new trainer into the database.
      * @param discordID the discord ID of the new user
@@ -17,10 +25,7 @@ public class DBHandler {
      */
     public static boolean newTrainer(String discordID) throws SQLException {
 
-        String url = GengarBot.getDbUrl();
-        String username = GengarBot.getDbUsername();
-        String password = GengarBot.getDbPassword();
-        Connection connection = DriverManager.getConnection(url, username, password);
+        Connection connection = getDatabaseConnection();
 
         String query1 = "SELECT COUNT(*) FROM Trainer WHERE discordID = " + discordID;
         Statement statement1 = connection.createStatement();
@@ -44,16 +49,16 @@ public class DBHandler {
 
     /**
      * Inserts a new pokemon into the database.
-     * @param trainerID trainer ID of the person who owns the pokemon
+     * @param trainerDiscordID discord ID of the person who owns the pokemon
      * @param dexNumber dex number of the pokemon
      * @param level level of the pokemon
      * @param shiny whether the pokemon is shiny
      * @return true if successful, false if not
      */
-    public static boolean newPokemon(String trainerID, int dexNumber, int level, boolean shiny) {
+    public static boolean newPokemon(String trainerDiscordID, int dexNumber, int level, boolean shiny) {
         Pokemon newPokemon = Pokemon.getById(dexNumber);
 
-        String originalTrainer = trainerID; //useless right now, will be useful when trading is added
+        String originalTrainerID = trainerDiscordID; //useless right now, will be useful when trading is added
 
         int timeCaught = (int) Instant.now().getEpochSecond();
 
@@ -103,19 +108,16 @@ public class DBHandler {
         int spDefIV = rand.nextInt(32);
         int speedIV = rand.nextInt(32);
 
-        characteristic = CharacteristicCalculator.determineCharacteristic(hpIV, attackIV, defenseIV, spAtkIV, spDefIV, speedIV);
+        characteristic = PokemonInfoCalculator.determineCharacteristic(hpIV, attackIV, defenseIV, spAtkIV, spDefIV, speedIV);
 
         try {
-            String url = "jdbc:mysql://212.192.28.120:3306/s74170_gengarbot_test";
-            String username = "u74170_K3O16UzWjV";
-            String password = "1aA.wACd=SaeU+DPZEFbOVx7";
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = getDatabaseConnection();
 
 
-            String query = "INSERT INTO Pokemon (trainerID, originalTrainer, timeCaught, dexNumber, " +
+            String query = "INSERT INTO Pokemon (trainerDiscordID, originalTrainerID, timeCaught, dexNumber, " +
                     "level, shiny, nature, sex, ability, terraType, happiness, characteristic, " +
                     "hpIV, attackIV, defenseIV, spAtkIV, spDefIV, speedIV) VALUES " +
-                    "('" + trainerID + "', '" + originalTrainer + "', '" + timeCaught + "', '" + dexNumber +
+                    "('" + trainerDiscordID + "', '" + originalTrainerID + "', '" + timeCaught + "', '" + dexNumber +
                     "', '" + level  + "', '" + shinyInt + "', '" + nature + "', '" + female + "', '" + abilityName +
                     "', '" + terraType + "', '" + happiness + "', '" + characteristic + "', '" + hpIV + "', '" +
                     attackIV + "', '" + defenseIV + "', '" + spAtkIV + "', '" + spDefIV + "', '" + speedIV + "')";
@@ -131,28 +133,5 @@ public class DBHandler {
         }
 
     }
-
-
-    public static String trainerIDFromDiscordID(String discordID){
-        try {
-            String url = "jdbc:mysql://212.192.28.120:3306/s74170_gengarbot_test";
-            String username = "u74170_K3O16UzWjV";
-            String password = "1aA.wACd=SaeU+DPZEFbOVx7";
-            Connection connection = DriverManager.getConnection(url, username, password);
-
-            String query = "SELECT id FROM Trainer WHERE discordID = " + discordID;
-            Statement statement = connection.createStatement();
-            ResultSet response = statement.executeQuery(query);
-            response.next();
-            String trainerID = response.getString(1);
-            statement.close();
-            return trainerID;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "";
-        }
-
-    }
-
 
 }

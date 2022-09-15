@@ -79,15 +79,8 @@ public class BotCommands extends ListenerAdapter {
                     String actualNameCap = actualName.substring(0,1).toUpperCase() + actualName.substring(1);
                     event.reply("Congratulations! You caught " + actualNameCap + "!").queue();
 
-                    String trainerID = DBHandler.trainerIDFromDiscordID(event.getUser().getId());
-
-                    if (!Objects.equals(trainerID, "")) {
-                        DBHandler.newPokemon(trainerID, pokemonID, 10, shiny);
-                    } else {
-                        event.reply("Something went wrong. Error code: CRIPES");
-                    }
-
-
+                    String discordID = event.getUser().getId();
+                    DBHandler.newPokemon(discordID, pokemonID, 10, shiny);
 
                     GengarBot.clearLatestEncounter(event.getChannel().getId());
                 } else {

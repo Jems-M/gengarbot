@@ -62,7 +62,7 @@ public class GengarBot {
                 .queue();
 
         LevelHandler.buildXpLookupTable();
-        CharacteristicCalculator.buildCharacteristicLookup();
+        PokemonInfoCalculator.buildCharacteristicLookup();
 
         dbUrl = args[1];
         dbUsername = args[2];
