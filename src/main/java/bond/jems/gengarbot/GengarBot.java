@@ -2,6 +2,7 @@ package bond.jems.gengarbot;
 
 import bond.jems.commands.BotCommands;
 import bond.jems.listeners.BotListeners;
+import com.github.oscar0812.pokeapi.models.pokemon.Pokemon;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -47,6 +48,10 @@ public class GengarBot {
 
     private static HashMap<String, TextChannel> spawnChannel = new HashMap<>();
 
+    private static HashMap<Integer, String> pokemonNameFromDexNumber = new HashMap<>();
+
+    private static HashMap<String, Boolean> pokemonCacheUpToDate = new HashMap<>();
+
     public static void main(String[] args) throws LoginException, InterruptedException {
         String token = args[0];
         dbUrl = args[1];
@@ -69,9 +74,16 @@ public class GengarBot {
         jda.upsertCommand("removespawnchannel", "Lets pokemon spawn anywhere.")
                 .queue();
 
+        jda.upsertCommand("pokemon", "Show a list of all the pokemon you've caught.")
+                .queue();
+
+
         LevelHandler.buildXpLookupTable();
         PokemonInfoCalculator.buildCharacteristicLookup();
         DBHandler.buildSpawnChannelCache();
+        PokemonInfoCalculator.buildPokemonNameLookup();
+
+
     }
 
     public static JDA getJda() {
@@ -159,5 +171,21 @@ public class GengarBot {
 
     public static String getDbPassword() {
         return dbPassword;
+    }
+
+    public static void addPokemonNameToLookup(int dexNumber, String name) {
+        pokemonNameFromDexNumber.put(dexNumber,name);
+    }
+
+    public static String getPokemonNameByDexNumber(int dexNumber) {
+        return pokemonNameFromDexNumber.get(dexNumber);
+    }
+
+    public static void pokemonCacheUpdated(String discordID, boolean upToDate) {
+        pokemonCacheUpToDate.put(discordID, upToDate);
+    }
+
+    public static boolean isPokemonCacheUpToDate(String discordID) {
+        return pokemonCacheUpToDate.get(discordID);
     }
 }

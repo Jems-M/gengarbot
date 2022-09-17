@@ -1,5 +1,6 @@
 package bond.jems.gengarbot;
 
+
 import java.util.ArrayList;
 
 public class Trainer {
@@ -11,25 +12,22 @@ public class Trainer {
 
     private boolean isEvTraining;
 
-    private ArrayList<CaughtPokemon> pokemonBox;
+    private ArrayList<CaughtPokemon> pokemonCache;
 
     public double getDiscordID() {
         return discordID;
     }
 
     public Trainer(double discordID) {
-        //this.trainerID = IDManager.getNewTrainerID();
         this.discordID = discordID;
     }
 
-    public CaughtPokemon getHighestLevelPokemon() {
-        int highestLevel = 0; // lowest possible level is 1
-        CaughtPokemon highestPokemon = null;
-        for (int i = 0; i < pokemonBox.size(); i++) {
-            if (pokemonBox.get(i).getLevel() > highestLevel) {
-                highestPokemon = pokemonBox.get(i);
-            }
-        }
-        return highestPokemon;
+    public void addToPokemonCache(CaughtPokemon pokemon) {
+        pokemonCache.add(pokemon);
     }
+
+    public void clearPokemonCache() {
+        pokemonCache.clear();
+    }
+
 }

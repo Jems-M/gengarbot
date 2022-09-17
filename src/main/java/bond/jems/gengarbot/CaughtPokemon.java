@@ -4,21 +4,34 @@ import java.util.Random;
 
 
 public class CaughtPokemon {
+
+    private double uniqueID;
+
+    private String name;
+
+    private String trainerDiscordID;
+    private String originalTrainerID;
+
+    private int timeCaught;
     private int dexNumber;
+    private String specialForm;
 
-    private double pokemonID;
-    private Trainer trainer;
+
     private String nickname;
-    private boolean shiny;
-    private int xp;
-
     private int level;
-    private Nature nature;
+    private int xp;
+    private boolean shiny;
+
+
+
+    private String nature;
     private Sex sex;
     private String ability;
+    private String holding;
     private boolean mega;
     private boolean megaY;
     private boolean gMax;
+    private String terraType;
     private int happiness;
     private String characteristic;
 
@@ -48,34 +61,43 @@ public class CaughtPokemon {
     private boolean bottleCappedSpDef;
     private boolean bottleCappedSpeed;
 
-    private Nature mintedNature;
+    private String mintedNature;
 
 
     Random rand = new Random();
 
     // complete constructor
-    public CaughtPokemon(int dexNumber, Trainer trainer, String nickname, boolean shiny, int xp, int level,
-                         Nature nature, Sex sex, String ability, boolean mega, boolean megaY,
-                         boolean gMax, int happiness, String move1, String move2, String move3, String move4,
+    public CaughtPokemon(int uniqueID, String name, String trainerDiscordID, String originalTrainerID, int timeCaught,
+                         int dexNumber, String specialForm, String nickname, int level, int xp, boolean shiny,
+                         String nature, Sex sex, String ability, String holding, boolean mega, boolean megaY, boolean gMax,
+                         String terraType, int happiness, String characteristic,
+                         String move1, String move2, String move3, String move4,
                          int HPEV, int AttackEV, int DefenseEV, int SpAtkEV, int SpDefEV, int SpeedEV,
                          int HPIV, int AttackIV, int DefenseIV, int SpAtkIV, int SpDefIV, int SpeedIV,
                          boolean bottleCappedHP, boolean bottleCappedAttack, boolean bottleCappedDefense,
-                         boolean bottleCappedSpAtk, boolean bottleCappedSpDef, boolean bottleCappedSpeed) {
+                         boolean bottleCappedSpAtk, boolean bottleCappedSpDef, boolean bottleCappedSpeed, String mintedNature) {
+        this.uniqueID = uniqueID;
+        this.name = name;
+        this.trainerDiscordID = trainerDiscordID;
+        this.originalTrainerID = originalTrainerID;
+        this.timeCaught = timeCaught;
         this.dexNumber = dexNumber;
-        this.trainer = trainer;
-        this.pokemonID = IDManager.getLastPokemonID() + 1;
-
+        this.specialForm = specialForm;
         this.nickname = nickname;
-        this.shiny = shiny;
-        this.xp = xp;
         this.level = level;
+        this.xp = xp;
+        this.shiny = shiny;
         this.nature = nature;
         this.sex = sex;
         this.ability = ability;
+        this.holding = holding;
         this.mega = mega;
         this.megaY = megaY;
         this.gMax = gMax;
-        this.happiness =  happiness;
+        this.terraType = terraType;
+        this.happiness = happiness;
+        this.characteristic = characteristic;
+
         this.move1 = move1;
         this.move2 = move2;
         this.move3 = move3;
@@ -101,61 +123,68 @@ public class CaughtPokemon {
         this.bottleCappedSpAtk = bottleCappedSpAtk;
         this.bottleCappedSpDef = bottleCappedSpDef;
         this.bottleCappedSpeed = bottleCappedSpeed;
+
+        this.mintedNature = mintedNature;
     }
 
-    // on-catch constructor
-    public CaughtPokemon(int dexNumber, Trainer trainer, boolean shiny) {
-        this.dexNumber = dexNumber;
-        this.trainer = trainer;
-        this.pokemonID = IDManager.getLastPokemonID() + 1;
-        this.shiny = shiny;
-
-        int maxPossibleXp = trainer.getHighestLevelPokemon().getXp();
-        this.xp = rand.nextInt(maxPossibleXp + 1);
-
-        this.nature = Nature.values()[rand.nextInt(Nature.values().length)];
-
-        this.ability = ability; // TODO: get abilities from PokeAPI
-        this.mega = false;
-        this.gMax = false;
-        this.happiness = 70; // TODO: get base happiness from PokeAPI
-        //this.moves = moves; // TODO: get movesets from PokeAPI
-
-        this.hpEV = 0;
-        this.attackEV = 0;
-        this.defenseEV = 0;
-        this.spAtkEV = 0;
-        this.spDefEV = 0;
-        this.speedEV = 0;
-
-        this.hpIV = rand.nextInt(32);
-        this.attackIV = rand.nextInt(32);
-        this.defenseIV = rand.nextInt(32);
-        this.spAtkIV = rand.nextInt(32);
-        this.spDefIV = rand.nextInt(32);
-        this.speedIV = rand.nextInt(32);
+    public double getUniqueID() {
+        return uniqueID;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public String getTrainerDiscordID() {
+        return trainerDiscordID;
+    }
+
+    public String getOriginalTrainerID() {
+        return originalTrainerID;
+    }
+
+    public int getTimeCaught() {
+        return timeCaught;
+    }
 
     public int getDexNumber() {
         return dexNumber;
     }
 
-    public double getPokemonID() {
-        return pokemonID;
+    public String getSpecialForm() {
+        return specialForm;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getXp() {
+        return xp;
     }
 
     public boolean isShiny() {
         return shiny;
     }
 
-    public Trainer getTrainer() {
-        return trainer;
+    public String getNature() {
+        return nature;
     }
 
-    public String getNickname() {
-        return nickname;
+    public Sex getSex() {
+        return sex;
+    }
+
+    public String getAbility() {
+        return ability;
+    }
+
+    public String getHolding() {
+        return holding;
     }
 
     public boolean isMega() {
@@ -168,6 +197,10 @@ public class CaughtPokemon {
 
     public boolean isgMax() {
         return gMax;
+    }
+
+    public String getTerraType() {
+        return terraType;
     }
 
     public int getHappiness() {
@@ -192,25 +225,6 @@ public class CaughtPokemon {
 
     public String getMove4() {
         return move4;
-    }
-
-    public Nature getNature() {
-        return nature;
-    }
-
-    public Sex getSex() {
-        return sex;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-    public int getXp() {
-        return xp;
-    }
-
-    public String getAbility() {
-        return ability;
     }
 
     public int getHpEV() {
@@ -261,8 +275,6 @@ public class CaughtPokemon {
         return speedIV;
     }
 
-
-
     public boolean isBottleCappedHP() {
         return bottleCappedHP;
     }
@@ -287,108 +299,7 @@ public class CaughtPokemon {
         return bottleCappedSpeed;
     }
 
-    public Nature getMintedNature() {
+    public String getMintedNature() {
         return mintedNature;
-    }
-
-
-    public void setTrainer(Trainer trainer) {
-        this.trainer = trainer;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void setLevel(int level) {
-        this.level = level; //TODO: make sure that you don't fuck up a pokemon's xp when you change their level
-    }
-
-    public void setXp(int xp) {
-        this.xp = xp;
-    }
-
-    public void setAbility(String ability) {
-        this.ability = ability;
-    }
-
-    public void setMega(boolean mega) {
-        this.mega = mega;
-    }
-
-    public void setgMax(boolean gMax) {
-        this.gMax = gMax;
-    }
-
-    public void setHappiness(int happiness) {
-        this.happiness = happiness;
-    }
-
-    public void setMove1(String move1) {
-        this.move1 = move1;
-    }
-
-    public void setMove2(String move2) {
-        this.move2 = move2;
-    }
-
-    public void setMove3(String move3) {
-        this.move3 = move3;
-    }
-
-    public void setMove4(String move4) {
-        this.move4 = move4;
-    }
-
-    public void setHpEV(int hpEV) {
-        this.hpEV = hpEV;
-    }
-
-    public void setAttackEV(int attackEV) {
-        this.attackEV = attackEV;
-    }
-
-    public void setDefenseEV(int defenseEV) {
-        this.defenseEV = defenseEV;
-    }
-
-    public void setSpAtkEV(int spAtkEV) {
-        this.spAtkEV = spAtkEV;
-    }
-
-    public void setSpDefEV(int spDefEV) {
-        this.spDefEV = spDefEV;
-    }
-
-    public void setSpeedEV(int speedEV) {
-        this.speedEV = speedEV;
-    }
-
-    public void setBottleCappedHP(boolean bottleCappedHP) {
-        this.bottleCappedHP = bottleCappedHP;
-    }
-
-    public void setBottleCappedAttack(boolean bottleCappedAttack) {
-        this.bottleCappedAttack = bottleCappedAttack;
-    }
-
-    public void setBottleCappedDefense(boolean bottleCappedDefense) {
-        this.bottleCappedDefense = bottleCappedDefense;
-    }
-
-    public void setBottleCappedSpAtk(boolean bottleCappedSpAtk) {
-        this.bottleCappedSpAtk = bottleCappedSpAtk;
-    }
-
-    public void setBottleCappedSpDef(boolean bottleCappedSpDef) {
-        this.bottleCappedSpDef = bottleCappedSpDef;
-    }
-
-    public void setBottleCappedSpeed(boolean bottleCappedSpeed) {
-        this.bottleCappedSpeed = bottleCappedSpeed;
-    }
-
-    public void setMintedNature(Nature mintedNature) {
-        this.mintedNature = mintedNature;
     }
 }

@@ -2,15 +2,19 @@ package bond.jems.commands;
 
 import bond.jems.gengarbot.DBHandler;
 import bond.jems.gengarbot.GengarBot;
+import bond.jems.gengarbot.PokemonListEntry;
 import com.github.oscar0812.pokeapi.utils.Client;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class BotCommands extends ListenerAdapter {
@@ -107,6 +111,25 @@ public class BotCommands extends ListenerAdapter {
             Or just "info" to get your buddy pokemon. For now, it just gets the latest.
              */
 
+
+
+        } else if (event.getName().equals("pokemon")) {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setColor(Color.MAGENTA.darker());
+            embedBuilder.setTitle("**Your pokemon;**");
+            embedBuilder.setFooter("Test footer, please ignore");
+            StringBuilder allPokemon = new StringBuilder();
+            ArrayList<PokemonListEntry> pokemonArrayList;
+            try {
+                pokemonArrayList = DBHandler.getPokemonList(event.getUser().getId());
+                for (PokemonListEntry pokemon : pokemonArrayList) {
+                    allPokemon.append(pokemon.toString());
+                }
+            } catch (SQLException e) {
+                allPokemon.append("I couldn't connect to the database :(");
+            }
+
+            embedBuilder.setDescription(allPokemon.toString());
 
 
         }

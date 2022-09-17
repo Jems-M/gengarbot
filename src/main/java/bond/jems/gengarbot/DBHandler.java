@@ -2,12 +2,10 @@ package bond.jems.gengarbot;
 
 import com.github.oscar0812.pokeapi.models.pokemon.Pokemon;
 import com.github.oscar0812.pokeapi.models.pokemon.PokemonAbility;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Channel;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import javax.annotation.Nonnull;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Random;
@@ -141,23 +139,102 @@ public class DBHandler {
 
     }
 
-    /*
-    public static boolean getLatestPokemon(String discordID) {
+
+    public static ArrayList<PokemonListEntry> getPokemonList(String discordID) throws SQLException {
+        ArrayList<PokemonListEntry> pokemonList = new ArrayList<>();
+
+        Connection connection = getDatabaseConnection();
+        Statement statement = connection.createStatement();
+        String query = "SELECT uniqueID, level, dexNumber, nickname, shiny, " +
+                "hpIV, attackIV, defenseIV, spAtkIV, spDefIV, speedIV " +
+                "FROM Pokemon WHERE trainerDiscordID = " + discordID + " ORDER BY uniqueID DESC";
+
+        ResultSet rs = statement.executeQuery(query);
+
+
+        while (rs.next()) {
+            double ivPercentage = (rs.getInt("hpIV") + rs.getInt("attackIV") + rs.getInt("defenseIV") +
+                    rs.getInt("spAtkIV") + rs.getInt("spDefIV") + rs.getInt("speedIV")) / 186.0;
+            DecimalFormat df = new DecimalFormat("###.##");
+            String ivPercentageString = df.format(ivPercentage);
+            String displayedName;
+            if (rs.getString("nickname") == null) {
+                displayedName = GengarBot.getPokemonNameByDexNumber(rs.getInt("dexNumber"));
+            } else {
+                displayedName = rs.getString("nickname");
+            }
+            PokemonListEntry newEntry = new PokemonListEntry(rs.getInt("uniqueID"), rs.getInt("level"),
+                    displayedName, rs.getBoolean("shiny"), ivPercentageString);
+
+            pokemonList.add(newEntry);
+        }
+
+        return pokemonList;
+    }
+
+
+    // Will probably go unused. Now am just going to get a small cache whenever the user asks for it, and
+    // get detailed info on specific pokemon when requested.
+    public static boolean updatePokemonCache(String discordID) {
         try {
             Connection connection = getDatabaseConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT MAX(timeCaught), nickname, shiny, mega, megaY, " +
-                    "gMax, level, nature, originalTrainerID, holding, " +
-                    "hpEV, hpIV, attackEV, attackIV, defenseEV, defenseIV, speedEV, speedIV, " +
-                    "move1, move2, move3, move4 FROM Pokemon WHERE trainerDiscordID = 219861850089717770";
+            String query = "SELECT * FROM Pokemon WHERE trainerDiscordID = " + discordID + " ORDER BY uniqueID DESC";
 
-            statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery(query);
+
+            //int[] dexNumbers = resultSet.getArray("dexNumber");
+
+            // while resultset has next object;
+            // build a new CaughtPokemon object and add it to a trainer's pokemonCache.
+            // remember to do updatePokemonCache on anything that changes info on any pokemon.
+
+            CaughtPokemon newPokemon;
+
+            while (rs.next()) {
+
+                boolean shiny;
+                int storedShinyValue = rs.getInt("shiny");
+
+                int storedSexValue = rs.getInt("sex");
+                Sex newPokemonSex;
+                if (storedSexValue == 1) {
+                    newPokemonSex = Sex.FEMALE;
+                } else if (storedSexValue == 0) {
+                    newPokemonSex = Sex.MALE;
+                } else {
+                    newPokemonSex = Sex.UNKNOWN;
+                }
+
+                newPokemon = new CaughtPokemon(rs.getInt("uniqueID"), rs.getString("name"),
+                        rs.getString("trainerDiscordID"), rs.getString("originalTrainerID"),
+                        rs.getInt("timeCaught"), rs.getInt("dexNumber"), rs.getString("specialForm"),
+                        rs.getString("nickname"), rs.getInt("level"), rs.getInt("xp"),
+                        rs.getBoolean("shiny"), rs.getString("nature"), newPokemonSex,
+                        rs.getString("ability"), rs.getString("holding"), rs.getBoolean("mega"),
+                        rs.getBoolean("megaY"), rs.getBoolean("gMax"), rs.getString("terraType"),
+                        rs.getInt("happiness"), rs.getString("characteristic"),
+                        rs.getString("move1"), rs.getString("move2"), rs.getString("move3"),
+                        rs.getString("move4"), rs.getInt("HPEV"), rs.getInt("AttackEV"),
+                        rs.getInt("DefenseEV"), rs.getInt("SpAtkEV"), rs.getInt("SpDefEV"),
+                        rs.getInt("SpeedEV"), rs.getInt("HPIV"),rs.getInt("AttackIV"),
+                        rs.getInt("DefenseIV"),rs.getInt("SpAtkIV"),rs.getInt("SpDefIV"),
+                        rs.getInt("SpeedIV"), rs.getBoolean("bottleCappedHP"), rs.getBoolean("bottleCappedAttack"),
+                        rs.getBoolean("bottleCappedDefense"), rs.getBoolean("bottleCappedSpAtk"),
+                        rs.getBoolean("bottleCappedSpDef"), rs.getBoolean("bottleCappedSpeed"), rs.getString("mintedNature"));
+            }
+
+
+
+            GengarBot.pokemonCacheUpdated(discordID, true);
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+        return true;
     }
-     */
+
+
 
 
     public static boolean setSpawnChannel(String guildID, String channelID) {
@@ -206,14 +283,6 @@ public class DBHandler {
                 spawnChannelIDList.add(resultSet.getString("spawnChannelID"));
             }
 
-            /*
-            for (int i = 0; i < spawnChannelIDList.size(); i++) {
-                if (spawnChannelIDList.get(i) == null) {
-                    spawnChannelIDList.set(i, "None");
-                }
-            }
-            */
-
             for (int i = 0; i < guildIDList.size(); i++) {
                 if (spawnChannelIDList.get(i) != null) {
                     TextChannel channel = GengarBot.getJda().getTextChannelById(spawnChannelIDList.get(i));
@@ -222,7 +291,6 @@ public class DBHandler {
 
             }
             connection.close();
-            //System.out.println("");
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
