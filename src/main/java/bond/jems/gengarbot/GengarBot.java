@@ -84,6 +84,7 @@ public class GengarBot {
         PokemonInfoCalculator.buildPokemonNameLookup();
 
 
+        System.out.println("Actually done loading, for real this time");
     }
 
     public static JDA getJda() {

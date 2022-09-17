@@ -154,7 +154,7 @@ public class DBHandler {
 
         while (rs.next()) {
             double ivPercentage = (rs.getInt("hpIV") + rs.getInt("attackIV") + rs.getInt("defenseIV") +
-                    rs.getInt("spAtkIV") + rs.getInt("spDefIV") + rs.getInt("speedIV")) / 186.0;
+                    rs.getInt("spAtkIV") + rs.getInt("spDefIV") + rs.getInt("speedIV")) / 186.0 * 100;
             DecimalFormat df = new DecimalFormat("###.##");
             String ivPercentageString = df.format(ivPercentage);
             String displayedName;

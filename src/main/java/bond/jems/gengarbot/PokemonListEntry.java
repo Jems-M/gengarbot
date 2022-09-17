@@ -36,10 +36,10 @@ public class PokemonListEntry {
     public String toString() {
         String shinyEmoji;
         if (shiny) {
-            shinyEmoji = "✨ ";
+            shinyEmoji = "✨";
         } else {
             shinyEmoji = "";
         }
-        return " | **" + displayedName + "** " + shinyEmoji + "| Level: " + level + " | IV: " + ivPercentage + "\n";
+        return " | **" + displayedName + "** | Level: " + level + " | ID: " + uniqueID + " | IV: " + ivPercentage + "% " + shinyEmoji + "\n";
     }
 }

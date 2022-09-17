@@ -114,22 +114,26 @@ public class BotCommands extends ListenerAdapter {
 
 
         } else if (event.getName().equals("pokemon")) {
+            event.deferReply().queue();
+            System.out.println("Running /pokemon");
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(Color.MAGENTA.darker());
             embedBuilder.setTitle("**Your pokemon;**");
             embedBuilder.setFooter("Test footer, please ignore");
             StringBuilder allPokemon = new StringBuilder();
             ArrayList<PokemonListEntry> pokemonArrayList;
+            String backtick = "`";
             try {
                 pokemonArrayList = DBHandler.getPokemonList(event.getUser().getId());
-                for (PokemonListEntry pokemon : pokemonArrayList) {
-                    allPokemon.append(pokemon.toString());
+                for (int i = 0; i < pokemonArrayList.size(); i++) {
+                    allPokemon.append(backtick).append(i).append(backtick).append(pokemonArrayList.get(i).toString());
                 }
             } catch (SQLException e) {
                 allPokemon.append("I couldn't connect to the database :(");
             }
 
             embedBuilder.setDescription(allPokemon.toString());
+            event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
 
 
         }
