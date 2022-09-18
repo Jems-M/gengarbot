@@ -88,6 +88,7 @@ public class GengarBot {
                 .queue();
 
         jda.upsertCommand("pokemon", "Show a list of all the pokemon you've caught.")
+                .addOption(OptionType.STRING, "language", "Pick a language (just two letters - FR, DE, ES, JA, etc)")
                 .queue();
 
 
@@ -105,7 +106,6 @@ public class GengarBot {
         pokemonNamesFromDexNumber.add(pokemonNamesTh);
         pokemonNamesFromDexNumber.add(pokemonNamesZhHans);
         pokemonNamesFromDexNumber.add(pokemonNamesZhHant);
-
 
         System.out.println("Actually done loading, for real this time");
     }
@@ -197,32 +197,32 @@ public class GengarBot {
         return dbPassword;
     }
 
-    public static void addPokemonNameToLookup(int language, int dexNumber, String name) {
-        if (language == 0) {
+    public static void addPokemonNameToLookup(String language, int dexNumber, String name) {
+        if (language.equals("de")) {
             pokemonNamesDe.put(dexNumber, name);
-        } else if (language == 1) {
+        } else if (language.equals("en")) {
             pokemonNamesEn.put(dexNumber, name);
-        } else if (language == 2) {
+        } else if (language.equals("es")) {
             pokemonNamesEs.put(dexNumber, name);
-        } else if (language == 3) {
+        } else if (language.equals("fr")) {
             pokemonNamesFr.put(dexNumber, name);
-        } else if (language == 4) {
+        } else if (language.equals("ja")) {
             pokemonNamesJa.put(dexNumber, name);
-        } else if (language == 5) {
+        } else if (language.equals("ko")) {
             pokemonNamesKo.put(dexNumber, name);
-        } else if (language == 6) {
+        } else if (language.equals("ru")) {
             pokemonNamesRu.put(dexNumber, name);
-        } else if (language == 7) {
+        } else if (language.equals("th")) {
             pokemonNamesTh.put(dexNumber, name);
-        } else if (language == 8) {
+        } else if (language.equals("zh-hans")) {
             pokemonNamesZhHans.put(dexNumber, name);
-        } else if (language == 9) {
+        } else if (language.equals("zh-hant")) {
             pokemonNamesZhHant.put(dexNumber, name);
         }
     }
 
-    public static String getPokemonNameByDexNumber(int language, int dexNumber) {
-        return pokemonNamesFromDexNumber.get(language).get(dexNumber);
+    public static String getPokemonNameByDexNumber(HashMap<Integer, String> languageHash, int dexNumber) {
+        return languageHash.get(dexNumber);
     }
 
     public static boolean pokemonNameMatch(int dexNumber, String name) {
@@ -258,5 +258,45 @@ public class GengarBot {
 
     public static boolean isPokemonCacheUpToDate(String discordID) {
         return pokemonCacheUpToDate.get(discordID);
+    }
+
+    public static HashMap<Integer, String> getPokemonNamesDe() {
+        return pokemonNamesDe;
+    }
+
+    public static HashMap<Integer, String> getPokemonNamesEn() {
+        return pokemonNamesEn;
+    }
+
+    public static HashMap<Integer, String> getPokemonNamesEs() {
+        return pokemonNamesEs;
+    }
+
+    public static HashMap<Integer, String> getPokemonNamesFr() {
+        return pokemonNamesFr;
+    }
+
+    public static HashMap<Integer, String> getPokemonNamesJa() {
+        return pokemonNamesJa;
+    }
+
+    public static HashMap<Integer, String> getPokemonNamesKo() {
+        return pokemonNamesKo;
+    }
+
+    public static HashMap<Integer, String> getPokemonNamesRu() {
+        return pokemonNamesRu;
+    }
+
+    public static HashMap<Integer, String> getPokemonNamesTh() {
+        return pokemonNamesTh;
+    }
+
+    public static HashMap<Integer, String> getPokemonNamesZhHans() {
+        return pokemonNamesZhHans;
+    }
+
+    public static HashMap<Integer, String> getPokemonNamesZhHant() {
+        return pokemonNamesZhHant;
     }
 }

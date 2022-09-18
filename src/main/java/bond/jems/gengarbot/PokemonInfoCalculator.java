@@ -10,6 +10,9 @@ import java.util.Scanner;
 
 public class PokemonInfoCalculator {
 
+
+    private static HashMap<String, HashMap<Integer, String>> languageStringToLanguageHash = new HashMap<>();
+
     private static HashMap<Integer, String> hpCharacteristics = new HashMap<>();
     private static HashMap<Integer, String> attackCharacteristics = new HashMap<>();
     private static HashMap<Integer, String> defenseCharacteristics = new HashMap<>();
@@ -39,6 +42,17 @@ public class PokemonInfoCalculator {
     }
 
     public static void buildPokemonNameLookup() {
+        languageStringToLanguageHash.put("de", GengarBot.getPokemonNamesDe());
+        languageStringToLanguageHash.put("en", GengarBot.getPokemonNamesEn());
+        languageStringToLanguageHash.put("es", GengarBot.getPokemonNamesEs());
+        languageStringToLanguageHash.put("fr", GengarBot.getPokemonNamesFr());
+        languageStringToLanguageHash.put("ja", GengarBot.getPokemonNamesJa());
+        languageStringToLanguageHash.put("ko", GengarBot.getPokemonNamesKo());
+        languageStringToLanguageHash.put("ru", GengarBot.getPokemonNamesRu());
+        languageStringToLanguageHash.put("th", GengarBot.getPokemonNamesTh());
+        languageStringToLanguageHash.put("zh-hans", GengarBot.getPokemonNamesZhHans());
+        languageStringToLanguageHash.put("zh-hant", GengarBot.getPokemonNamesZhHant());
+
         ArrayList<String> languageFiles = new ArrayList<>();
         languageFiles.add("src/main/resources/languages/de");
         languageFiles.add("src/main/resources/languages/en");
@@ -52,12 +66,13 @@ public class PokemonInfoCalculator {
         languageFiles.add("src/main/resources/languages/zh-hant");
 
         try {
-            for (int i = 0; i < 9; i++) {
-                File languageFile = new File(languageFiles.get(i));
+            for (String languageFilePath : languageFiles) {
+                String shortLangString = languageFilePath.substring(29);
+                File languageFile = new File(languageFilePath);
                 Scanner scanner = new Scanner(languageFile);
                 int dexNumber = 1;
                 while (scanner.hasNextLine()) {
-                    GengarBot.addPokemonNameToLookup(i, dexNumber, scanner.nextLine());
+                    GengarBot.addPokemonNameToLookup(shortLangString, dexNumber, scanner.nextLine());
                     dexNumber++;
                 }
             }
@@ -140,5 +155,9 @@ public class PokemonInfoCalculator {
             // we shouldn't ever get here?
             return "Loves finding bugs";
         }
+    }
+
+    public static HashMap<String, HashMap<Integer, String>> getLanguageStringToLanguageHash() {
+        return languageStringToLanguageHash;
     }
 }

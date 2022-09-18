@@ -2,6 +2,7 @@ package bond.jems.commands;
 
 import bond.jems.gengarbot.DBHandler;
 import bond.jems.gengarbot.GengarBot;
+import bond.jems.gengarbot.PokemonInfoCalculator;
 import bond.jems.gengarbot.PokemonListEntry;
 import com.github.oscar0812.pokeapi.utils.Client;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class BotCommands extends ListenerAdapter {
@@ -109,6 +111,16 @@ public class BotCommands extends ListenerAdapter {
              */
 
         } else if (event.getName().equals("pokemon")) {
+            OptionMapping language = event.getOption("language");
+            String languageString;
+            if (language == null || PokemonInfoCalculator.getLanguageStringToLanguageHash().get(language.getAsString()) == null) {
+                languageString = "en";
+            } else {
+                languageString = language.getAsString().toLowerCase();
+                //String[] availableLanguages = {"de", "en", "es", "fr", "ja", "ko", "ru", "th", "zh-hans", "zh-hant"};
+                //if (availableLanguages.)
+            }
+            HashMap<Integer, String> languageHash = PokemonInfoCalculator.getLanguageStringToLanguageHash().get(languageString);
             event.deferReply().queue();
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(Color.MAGENTA.darker());
@@ -118,7 +130,7 @@ public class BotCommands extends ListenerAdapter {
             ArrayList<PokemonListEntry> pokemonArrayList;
             String backtick = "`";
             try {
-                pokemonArrayList = DBHandler.getPokemonList(event.getUser().getId());
+                pokemonArrayList = DBHandler.getPokemonList(event.getUser().getId(), languageHash);
                 for (int i = 0; i < pokemonArrayList.size(); i++) {
                     allPokemon.append(backtick).append(i).append(backtick).append(pokemonArrayList.get(i).toString());
                 }

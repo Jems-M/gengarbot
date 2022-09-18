@@ -8,6 +8,7 @@ import java.sql.*;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class DBHandler {
@@ -140,7 +141,7 @@ public class DBHandler {
     }
 
 
-    public static ArrayList<PokemonListEntry> getPokemonList(String discordID) throws SQLException {
+    public static ArrayList<PokemonListEntry> getPokemonList(String discordID, HashMap<Integer, String> languageHash) throws SQLException {
         ArrayList<PokemonListEntry> pokemonList = new ArrayList<>();
 
         Connection connection = getDatabaseConnection();
@@ -159,7 +160,7 @@ public class DBHandler {
             String ivPercentageString = df.format(ivPercentage);
             String displayedName;
             if (rs.getString("nickname") == null) {
-                displayedName = GengarBot.getPokemonNameByDexNumber(1, rs.getInt("dexNumber"));
+                displayedName = GengarBot.getPokemonNameByDexNumber(languageHash, rs.getInt("dexNumber"));
             } else {
                 displayedName = rs.getString("nickname");
             }
