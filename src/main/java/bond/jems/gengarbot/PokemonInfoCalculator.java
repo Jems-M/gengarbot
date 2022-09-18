@@ -4,6 +4,7 @@ import com.github.oscar0812.pokeapi.models.pokemon.Nature;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -38,18 +39,32 @@ public class PokemonInfoCalculator {
     }
 
     public static void buildPokemonNameLookup() {
+        ArrayList<String> languageFiles = new ArrayList<>();
+        languageFiles.add("src/main/resources/languages/de");
+        languageFiles.add("src/main/resources/languages/en");
+        languageFiles.add("src/main/resources/languages/es");
+        languageFiles.add("src/main/resources/languages/fr");
+        languageFiles.add("src/main/resources/languages/ja");
+        languageFiles.add("src/main/resources/languages/ko");
+        languageFiles.add("src/main/resources/languages/ru");
+        languageFiles.add("src/main/resources/languages/th");
+        languageFiles.add("src/main/resources/languages/zh-hans");
+        languageFiles.add("src/main/resources/languages/zh-hant");
+
         try {
-            File pokemonNameFile = new File("src/main/resources/pokemonNames");
-            Scanner scanner = new Scanner(pokemonNameFile);
-            int dexNumber = 1;
-            while (scanner.hasNextLine()) {
-                GengarBot.addPokemonNameToLookup(dexNumber, scanner.nextLine());
-                dexNumber++;
+            for (int i = 0; i < 9; i++) {
+                File languageFile = new File(languageFiles.get(i));
+                Scanner scanner = new Scanner(languageFile);
+                int dexNumber = 1;
+                while (scanner.hasNextLine()) {
+                    GengarBot.addPokemonNameToLookup(i, dexNumber, scanner.nextLine());
+                    dexNumber++;
+                }
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("Failed to build pokemon name lookup; couldn't find the file.");
+            System.out.println("Unable to build pokemon name lookup; FileNotFoundException.");
         }
+
 
     }
 

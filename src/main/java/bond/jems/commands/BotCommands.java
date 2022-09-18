@@ -77,23 +77,20 @@ public class BotCommands extends ListenerAdapter {
             if (GengarBot.getLatestEncounter(channelID) != null) {
                 int pokemonID = GengarBot.getLatestEncounter(channelID).getDexNumber();
                 boolean shiny = GengarBot.getLatestEncounter(channelID).isShiny();
-                String actualName = Client.getPokemonById(pokemonID).getSpecies().getName();
-                actualName = Normalizer.normalize(actualName, Normalizer.Form.NFD);
-                actualName = actualName.replaceAll("[^\\p{ASCII}]", "");
+                //String actualName = Client.getPokemonById(pokemonID).getSpecies().getName();
+                //actualName = Normalizer.normalize(actualName, Normalizer.Form.NFD);
+                //actualName = actualName.replaceAll("[^\\p{ASCII}]", "");
 
-                if (nameGuess.equals(actualName)) {
+                if (GengarBot.pokemonNameMatch(pokemonID, nameGuess)) {
                     event.getUser().getId();
-                    String actualNameCap = actualName.substring(0,1).toUpperCase() + actualName.substring(1);
-                    event.reply("Congratulations! You caught " + actualNameCap + "!").queue();
-
-                    String discordID = event.getUser().getId();
-
+                    String actualName = nameGuess.substring(0,1).toUpperCase() + nameGuess.substring(1);
                     try {
+                        event.reply("Congratulations! You caught " + actualName + "!").queue();
+                        String discordID = event.getUser().getId();
                         DBHandler.newPokemon(discordID, pokemonID, 10, shiny);
                     } catch (SQLIntegrityConstraintViolationException e) {
                         event.reply("You haven't registered yet! Do /start to start catching pokemon!").queue();
                     }
-
 
                     GengarBot.clearLatestEncounter(event.getChannel().getId());
                 } else {
@@ -111,11 +108,8 @@ public class BotCommands extends ListenerAdapter {
             Or just "info" to get your buddy pokemon. For now, it just gets the latest.
              */
 
-
-
         } else if (event.getName().equals("pokemon")) {
             event.deferReply().queue();
-            System.out.println("Running /pokemon");
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(Color.MAGENTA.darker());
             embedBuilder.setTitle("**Your pokemon;**");
@@ -134,7 +128,6 @@ public class BotCommands extends ListenerAdapter {
 
             embedBuilder.setDescription(allPokemon.toString());
             event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
-
 
         }
     }

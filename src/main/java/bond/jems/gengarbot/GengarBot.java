@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 
 import javax.security.auth.login.LoginException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
@@ -29,13 +30,13 @@ public class GengarBot {
             704,705,706,714,715,782,783,784,785,885,886,887};
     static Integer[] ultraBeastDexNumbers = new Integer[]{793,794,795,796,797,798,799,803,804,805,806};
     static Integer[] legendaryDexNumbers = new Integer[]{144,145,146,150,243,244,245,249,250,377,378,379,380,381,382,383,384,
-            480,481,482,483,484,486,487,488,638,639,640,641,642,643,644,645,646,716,717,718,785,786,787,788,789,790,791,792,
+            480,481,482,483,484,486,487,488,638,639,640,641,642,643,644,645,646,716,717,718,773,785,786,787,788,789,790,791,792,
             800,888,889,890,891,892,894,895,896,897,898,905};
     static Integer[] mythicalDexNumbers = new Integer[]{151,251,385,386,489,490,491,492,493,494,647,648,649,719,720,721,801,802,807,808,809,893};
 
     static Integer[] allSpecialDexNumbers = new Integer[]{137,147,148,149,233,246,247,248,349,350,371,372,373,
             374,375,376,442,443,444,445,447,448,474,479,485,570,571,610,611,612,633,634,635,636,637,704,705,
-            706,714,715,782,783,784,785,885,886,887,793,794,795,796,797,798,799,803,804,805,806,144,145,146,
+            706,714,715,782,783,784,773,885,886,887,793,794,795,796,797,798,799,803,804,805,806,144,145,146,
             150,243,244,245,249,250,377,378,379,380,381,382,383,384,480,481,482,483,484,486,487,488,638,639,
             640,641,642,643,644,645,646,716,717,718,785,786,787,788,789,790,791,792,800,888,889,890,891,892,
             894,895,896,897,898,905,151,251,385,386,489,490,491,492,493,494,647,648,649,719,720,721,801,802,
@@ -44,11 +45,23 @@ public class GengarBot {
     //unown = 61, maybe need to do something with its forms
     //rotom = 479
 
-    private static HashMap<String, ChatEncounter> LatestEncounterInChannel = new HashMap<>();
+    private static HashMap<String, ChatEncounter> latestEncounterInChannel = new HashMap<>();
 
     private static HashMap<String, TextChannel> spawnChannel = new HashMap<>();
 
-    private static HashMap<Integer, String> pokemonNameFromDexNumber = new HashMap<>();
+    private static HashMap<Integer, String> pokemonNamesDe = new HashMap<>();
+    private static HashMap<Integer, String> pokemonNamesEn = new HashMap<>();
+    private static HashMap<Integer, String> pokemonNamesEs = new HashMap<>();
+    private static HashMap<Integer, String> pokemonNamesFr = new HashMap<>();
+    private static HashMap<Integer, String> pokemonNamesJa = new HashMap<>();
+    private static HashMap<Integer, String> pokemonNamesKo = new HashMap<>();
+    private static HashMap<Integer, String> pokemonNamesRu = new HashMap<>();
+    private static HashMap<Integer, String> pokemonNamesTh = new HashMap<>();
+    private static HashMap<Integer, String> pokemonNamesZhHans = new HashMap<>();
+    private static HashMap<Integer, String> pokemonNamesZhHant = new HashMap<>();
+
+    private static ArrayList<HashMap<Integer, String>> pokemonNamesFromDexNumber = new ArrayList<>();
+
 
     private static HashMap<String, Boolean> pokemonCacheUpToDate = new HashMap<>();
 
@@ -82,6 +95,16 @@ public class GengarBot {
         PokemonInfoCalculator.buildCharacteristicLookup();
         DBHandler.buildSpawnChannelCache();
         PokemonInfoCalculator.buildPokemonNameLookup();
+        pokemonNamesFromDexNumber.add(pokemonNamesDe);
+        pokemonNamesFromDexNumber.add(pokemonNamesEn);
+        pokemonNamesFromDexNumber.add(pokemonNamesEs);
+        pokemonNamesFromDexNumber.add(pokemonNamesFr);
+        pokemonNamesFromDexNumber.add(pokemonNamesJa);
+        pokemonNamesFromDexNumber.add(pokemonNamesKo);
+        pokemonNamesFromDexNumber.add(pokemonNamesRu);
+        pokemonNamesFromDexNumber.add(pokemonNamesTh);
+        pokemonNamesFromDexNumber.add(pokemonNamesZhHans);
+        pokemonNamesFromDexNumber.add(pokemonNamesZhHant);
 
 
         System.out.println("Actually done loading, for real this time");
@@ -92,16 +115,16 @@ public class GengarBot {
     }
 
     public static void updateLatestEncounter(String channelID, ChatEncounter encounter) {
-        LatestEncounterInChannel.put(channelID, encounter);
+        latestEncounterInChannel.put(channelID, encounter);
 
     }
 
     public static ChatEncounter getLatestEncounter(String channelID) {
-        return LatestEncounterInChannel.get(channelID);
+        return latestEncounterInChannel.get(channelID);
     }
 
     public static void clearLatestEncounter(String channelID) {
-        LatestEncounterInChannel.remove(channelID);
+        latestEncounterInChannel.remove(channelID);
     }
 
 
@@ -131,7 +154,7 @@ public class GengarBot {
         int newDexNumber;
         newDexNumber = rand.nextInt(905) + 1;
 
-        while (Arrays.asList(allSpecialDexNumbers).contains(newDexNumber) && rarity < 9000) {
+        while (Arrays.asList(allSpecialDexNumbers).contains(newDexNumber) && rarity < 9800) {
             newDexNumber = rand.nextInt(905) + 1;
         }
 
@@ -174,12 +197,59 @@ public class GengarBot {
         return dbPassword;
     }
 
-    public static void addPokemonNameToLookup(int dexNumber, String name) {
-        pokemonNameFromDexNumber.put(dexNumber,name);
+    public static void addPokemonNameToLookup(int language, int dexNumber, String name) {
+        if (language == 0) {
+            pokemonNamesDe.put(dexNumber, name);
+        } else if (language == 1) {
+            pokemonNamesEn.put(dexNumber, name);
+        } else if (language == 2) {
+            pokemonNamesEs.put(dexNumber, name);
+        } else if (language == 3) {
+            pokemonNamesFr.put(dexNumber, name);
+        } else if (language == 4) {
+            pokemonNamesJa.put(dexNumber, name);
+        } else if (language == 5) {
+            pokemonNamesKo.put(dexNumber, name);
+        } else if (language == 6) {
+            pokemonNamesRu.put(dexNumber, name);
+        } else if (language == 7) {
+            pokemonNamesTh.put(dexNumber, name);
+        } else if (language == 8) {
+            pokemonNamesZhHans.put(dexNumber, name);
+        } else if (language == 9) {
+            pokemonNamesZhHant.put(dexNumber, name);
+        }
     }
 
-    public static String getPokemonNameByDexNumber(int dexNumber) {
-        return pokemonNameFromDexNumber.get(dexNumber);
+    public static String getPokemonNameByDexNumber(int language, int dexNumber) {
+        return pokemonNamesFromDexNumber.get(language).get(dexNumber);
+    }
+
+    public static boolean pokemonNameMatch(int dexNumber, String name) {
+        System.out.println(pokemonNamesEn.get(dexNumber));
+        if (name.equalsIgnoreCase(pokemonNamesDe.get(dexNumber))) {
+            return true;
+        } else if (name.equalsIgnoreCase(pokemonNamesEn.get(dexNumber))) {
+            return true;
+        } else if (name.equalsIgnoreCase(pokemonNamesEs.get(dexNumber))) {
+            return true;
+        } else if (name.equalsIgnoreCase(pokemonNamesFr.get(dexNumber))) {
+            return true;
+        } else if (name.equalsIgnoreCase(pokemonNamesJa.get(dexNumber))) {
+            return true;
+        } else if (name.equalsIgnoreCase(pokemonNamesKo.get(dexNumber))) {
+            return true;
+        } else if (name.equalsIgnoreCase(pokemonNamesRu.get(dexNumber))) {
+            return true;
+        } else if (name.equalsIgnoreCase(pokemonNamesTh.get(dexNumber))) {
+            return true;
+        } else if (name.equalsIgnoreCase(pokemonNamesZhHans.get(dexNumber))) {
+            return true;
+        } else if (name.equalsIgnoreCase(pokemonNamesZhHant.get(dexNumber))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static void pokemonCacheUpdated(String discordID, boolean upToDate) {

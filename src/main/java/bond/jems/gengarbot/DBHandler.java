@@ -159,7 +159,7 @@ public class DBHandler {
             String ivPercentageString = df.format(ivPercentage);
             String displayedName;
             if (rs.getString("nickname") == null) {
-                displayedName = GengarBot.getPokemonNameByDexNumber(rs.getInt("dexNumber"));
+                displayedName = GengarBot.getPokemonNameByDexNumber(1, rs.getInt("dexNumber"));
             } else {
                 displayedName = rs.getString("nickname");
             }

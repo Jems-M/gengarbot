@@ -22,7 +22,7 @@ public class LevelHandler {
 
     public static void buildXpLookupTable() {
         try {
-            File erraticFile = new File("src/main/resources/erratic");
+            File erraticFile = new File("src/main/resources/levelRates/erratic");
             Scanner scanner = new Scanner(erraticFile);
             int level = 0;
             int xp;
@@ -33,7 +33,7 @@ public class LevelHandler {
             }
 
 
-            File fastFile = new File("src/main/resources/fast");
+            File fastFile = new File("src/main/resources/levelRates/fast");
             scanner = new Scanner(fastFile);
             level = 0;
             while (scanner.hasNextInt()) {
@@ -42,7 +42,7 @@ public class LevelHandler {
                 fast.put(level,xp);
             }
 
-            File mediumFastFile = new File("src/main/resources/mediumFast");
+            File mediumFastFile = new File("src/main/resources/levelRates/mediumFast");
             scanner = new Scanner(mediumFastFile);
             level = 0;
             while (scanner.hasNextInt()) {
@@ -51,7 +51,7 @@ public class LevelHandler {
                 mediumFast.put(level,xp);
             }
 
-            File mediumSlowFile = new File("src/main/resources/mediumSlow");
+            File mediumSlowFile = new File("src/main/resources/levelRates/mediumSlow");
             scanner = new Scanner(mediumSlowFile);
             level = 0;
             while (scanner.hasNextInt()) {
@@ -60,7 +60,7 @@ public class LevelHandler {
                 mediumSlow.put(level,xp);
             }
 
-            File slowFile = new File("src/main/resources/slow");
+            File slowFile = new File("src/main/resources/levelRates/slow");
             scanner = new Scanner(slowFile);
             level = 0;
             while (scanner.hasNextInt()) {
@@ -69,7 +69,7 @@ public class LevelHandler {
                 slow.put(level,xp);
             }
 
-            File fluctuatingFile = new File("src/main/resources/fluctuating");
+            File fluctuatingFile = new File("src/main/resources/levelRates/fluctuating");
             scanner = new Scanner(fluctuatingFile);
             level = 0;
             while (scanner.hasNextInt()) {
