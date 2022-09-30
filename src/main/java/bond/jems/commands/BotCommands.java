@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -111,6 +112,14 @@ public class BotCommands extends ListenerAdapter {
              */
 
         } else if (event.getName().equals("pokemon")) {
+            OptionMapping page = event.getOption("page");
+            int pageNumber;
+            if (page == null) {
+                pageNumber = 0;
+            } else {
+                 pageNumber = Math.max(page.getAsInt() - 1, 0);
+            }
+
             OptionMapping language = event.getOption("language");
             String languageString;
             if (language == null || PokemonInfoCalculator.getLanguageStringToLanguageHash().get(language.getAsString()) == null) {
@@ -125,20 +134,26 @@ public class BotCommands extends ListenerAdapter {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(Color.MAGENTA.darker());
             embedBuilder.setTitle("**Your pokemon;**");
-            embedBuilder.setFooter("Test footer, please ignore");
+            //embedBuilder.setFooter("Test footer, please ignore");
             StringBuilder allPokemon = new StringBuilder();
             ArrayList<PokemonListEntry> pokemonArrayList;
             String backtick = "`";
             try {
                 pokemonArrayList = DBHandler.getPokemonList(event.getUser().getId(), languageHash);
-                for (int i = 0; i < pokemonArrayList.size(); i++) {
-                    allPokemon.append(backtick).append(i).append(backtick).append(pokemonArrayList.get(i).toString());
+
+                int start = pageNumber * 20;
+                int finish = Math.min(start + 20, pokemonArrayList.size() - 1);
+
+                //for (int i = start; i < finish; i++) {
+                for (int i = start; i < finish; i++) {
+                    allPokemon.append(pokemonArrayList.get(i).toString());
+                    //allPokemon.append(backtick).append(i).append(backtick).append(pokemonArrayList.get(i).toString());
                 }
             } catch (SQLException e) {
                 allPokemon.append("I couldn't connect to the database :(");
             }
 
-            embedBuilder.setDescription(allPokemon.toString());
+            embedBuilder.setDescription("*Page " + (pageNumber + 1) + "*\n" + allPokemon);
             event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
 
         }

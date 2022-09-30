@@ -40,6 +40,6 @@ public class PokemonListEntry {
         } else {
             shinyEmoji = "";
         }
-        return " | **" + displayedName + "** | Level: " + level + " | ID: " + uniqueID + " | IV: " + ivPercentage + "% " + shinyEmoji + "\n";
+        return "**" + displayedName + "** | Level: " + level + " | ID: " + uniqueID + " | IV: " + ivPercentage + "% " + shinyEmoji + "\n";
     }
 }

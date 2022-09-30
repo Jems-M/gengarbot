@@ -88,6 +88,7 @@ public class GengarBot {
                 .queue();
 
         jda.upsertCommand("pokemon", "Show a list of all the pokemon you've caught.")
+                .addOption(OptionType.INTEGER, "page", "The page of pokemon you want to view.")
                 .addOption(OptionType.STRING, "language", "Pick a language (just two letters - FR, DE, ES, JA, etc)")
                 .queue();
 
@@ -198,26 +199,17 @@ public class GengarBot {
     }
 
     public static void addPokemonNameToLookup(String language, int dexNumber, String name) {
-        if (language.equals("de")) {
-            pokemonNamesDe.put(dexNumber, name);
-        } else if (language.equals("en")) {
-            pokemonNamesEn.put(dexNumber, name);
-        } else if (language.equals("es")) {
-            pokemonNamesEs.put(dexNumber, name);
-        } else if (language.equals("fr")) {
-            pokemonNamesFr.put(dexNumber, name);
-        } else if (language.equals("ja")) {
-            pokemonNamesJa.put(dexNumber, name);
-        } else if (language.equals("ko")) {
-            pokemonNamesKo.put(dexNumber, name);
-        } else if (language.equals("ru")) {
-            pokemonNamesRu.put(dexNumber, name);
-        } else if (language.equals("th")) {
-            pokemonNamesTh.put(dexNumber, name);
-        } else if (language.equals("zh-hans")) {
-            pokemonNamesZhHans.put(dexNumber, name);
-        } else if (language.equals("zh-hant")) {
-            pokemonNamesZhHant.put(dexNumber, name);
+        switch (language) {
+            case "de" -> pokemonNamesDe.put(dexNumber, name);
+            case "en" -> pokemonNamesEn.put(dexNumber, name);
+            case "es" -> pokemonNamesEs.put(dexNumber, name);
+            case "fr" -> pokemonNamesFr.put(dexNumber, name);
+            case "ja" -> pokemonNamesJa.put(dexNumber, name);
+            case "ko" -> pokemonNamesKo.put(dexNumber, name);
+            case "ru" -> pokemonNamesRu.put(dexNumber, name);
+            case "th" -> pokemonNamesTh.put(dexNumber, name);
+            case "zh-hans" -> pokemonNamesZhHans.put(dexNumber, name);
+            case "zh-hant" -> pokemonNamesZhHant.put(dexNumber, name);
         }
     }
 
