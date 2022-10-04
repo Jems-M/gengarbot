@@ -6,9 +6,13 @@ import bond.jems.gengarbot.PokemonInfoCalculator;
 import bond.jems.gengarbot.PokemonListEntry;
 import com.github.oscar0812.pokeapi.utils.Client;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.internal.utils.PermissionUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -41,12 +45,20 @@ public class BotCommands extends ListenerAdapter {
 
 
         } else if (event.getName().equals("spawnchannel")){
+            //boolean canManageChannels = PermissionUtil.checkPermission(event.getMember(), Permission.MANAGE_CHANNEL);
+            //boolean canManageChannels = PermissionUtil.checkPermission((Member) event.getUser(), Permission.MANAGE_CHANNEL);
+            boolean canManageChannels = true; //temporary
 
             if (event.getGuild() != null) {
-                String guildID = event.getGuild().getId();
-                GengarBot.setSpawnChannel(guildID, event.getTextChannel());
-                DBHandler.setSpawnChannel(guildID, event.getTextChannel().getId());
-                event.reply("Redirected this server's pokemon spawns to this channel!").queue();
+                if (canManageChannels) {
+                    String guildID = event.getGuild().getId();
+                    GengarBot.setSpawnChannel(guildID, event.getTextChannel());
+                    DBHandler.setSpawnChannel(guildID, event.getTextChannel().getId());
+                    event.reply("Redirected this server's pokemon spawns to this channel!").queue();
+                } else {
+                    event.reply("You don't have permission to manage channels :(");
+                }
+
 
             } else {
                 event.reply("An error occurred. Error code: NUTS").queue();
@@ -54,14 +66,19 @@ public class BotCommands extends ListenerAdapter {
 
 
         } else if (event.getName().equals("removespawnchannel")) {
+            //boolean canManageChannels = PermissionUtil.checkPermission(event.getMember(), Permission.MANAGE_CHANNEL);
+            //boolean canManageChannels = PermissionUtil.checkPermission((Member) event.getUser(), Permission.MANAGE_CHANNEL);
+            //TODO: find out how to check if a user can manage channels. same for /spawnchannel.
+            boolean canManageChannels = true; //temporary
 
-            if (event.getGuild().getId() != null) {
+            if (canManageChannels) {
+                String guildID = event.getGuild().getId();
                 GengarBot.removeSpawnChannel(event.getGuild().getId());
+                DBHandler.removeSpawnChannel(guildID);
                 event.reply("Removed this server's spawn channel.").queue();
             } else {
-                event.reply("This server doesn't have a spawn channel!").queue();
+                event.reply("You don't have permission to manage channels :(");
             }
-
 
         } else if (event.getName().equals("catch")) {
             // SQLIntegrityConstraintViolationException if not registered - add a check for this
@@ -156,6 +173,18 @@ public class BotCommands extends ListenerAdapter {
             embedBuilder.setDescription("*Page " + (pageNumber + 1) + "*\n" + allPokemon);
             event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
 
+        } else if (event.getName().equals("setbuddy")) {
+            OptionMapping pokemonID = event.getOption("id");
+            double id = pokemonID.getAsDouble();
+            String discordID = event.getUser().getId();
+
+            boolean success = DBHandler.setBuddy(id, discordID);
+
+            if (success) {
+                event.reply("Set your buddy successfully!").queue();
+            } else {
+                event.reply("Couldn't set your buddy :(").queue();
+            }
         }
     }
 }

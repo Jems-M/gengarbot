@@ -252,6 +252,20 @@ public class DBHandler {
         return true;
     }
 
+    public static boolean removeSpawnChannel(String guildID) {
+        try {
+            Connection connection = getDatabaseConnection();
+            Statement statement = connection.createStatement();
+            String query = "UPDATE `Guild` SET `spawnChannelID` = NULL WHERE `Guild`.`guildID` = '" + guildID + "'";
+            statement.executeUpdate(query);
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
 
     public static boolean newGuild(String guildID) {
         try {
@@ -299,6 +313,33 @@ public class DBHandler {
 
 
         return true;
+    }
+
+    public static boolean setBuddy(double pokemonID, String discordID) {
+        try {
+            Connection connection = getDatabaseConnection();
+            Statement statement = connection.createStatement();
+            String query = "SELECT COUNT(1) FROM `Pokemon` WHERE `uniqueID` = '" + pokemonID + "' AND `trainerDiscordID` = '" + discordID + "'";
+            ResultSet resultSet = statement.executeQuery(query);
+            resultSet.next();
+
+            if (resultSet.getInt(1) == 1) {
+                // pokemon exists, belongs to the current user
+                statement = connection.createStatement();
+                query = "UPDATE `Trainer` SET `currentBuddyID` = '" + pokemonID + "' WHERE `Trainer`.`discordID` = '" + discordID + "'";
+                statement.executeUpdate(query);
+
+            } else {
+                //pokemon doesnt exist, or doesn't belong to current user
+                return false;
+            }
+
+            connection.close();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

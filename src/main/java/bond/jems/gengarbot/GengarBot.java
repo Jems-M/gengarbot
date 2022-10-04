@@ -92,6 +92,14 @@ public class GengarBot {
                 .addOption(OptionType.STRING, "language", "Pick a language (just two letters - FR, DE, ES, JA, etc)")
                 .queue();
 
+        jda.upsertCommand("setbuddy", "Set a new buddy.")
+                .addOption(OptionType.INTEGER, "id", "The ID of the pokemon")
+                .queue();
+
+        jda.upsertCommand("info", "Display info on a pokemon.")
+                .addOption(OptionType.INTEGER, "page", "The pokemon who's info you want to view.", false)
+                .queue();
+
 
         LevelHandler.buildXpLookupTable();
         PokemonInfoCalculator.buildCharacteristicLookup();
