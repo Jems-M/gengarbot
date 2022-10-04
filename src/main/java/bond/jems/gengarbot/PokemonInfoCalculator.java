@@ -28,11 +28,13 @@ public class PokemonInfoCalculator {
         return (int) stat;
     }
 
-    public static int calculateStat(int base, int iv, int ev, int level, boolean natureBoosted) {
+    public static int calculateStat(int base, int iv, int ev, int level, boolean natureBoosted, boolean natureReduced) {
         int quarterEv = (int) Math.floor((float) ev / 4);
         double stat = ((2 * base) + iv + quarterEv) * level;
-        if (natureBoosted) {
-            stat = Math.floor((Math.floor(stat / 100) + 5) * 1.1) ;
+        if (natureBoosted && !natureReduced) {
+            stat = Math.floor((Math.floor(stat / 100) + 5) * 1.1);
+        } else if (natureReduced && !natureBoosted) {
+            stat = Math.floor((Math.floor(stat / 100) + 5) * 0.9);
         } else {
             stat = Math.floor(stat / 100);
         }

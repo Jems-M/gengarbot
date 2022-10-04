@@ -1,9 +1,7 @@
 package bond.jems.commands;
 
-import bond.jems.gengarbot.DBHandler;
-import bond.jems.gengarbot.GengarBot;
-import bond.jems.gengarbot.PokemonInfoCalculator;
-import bond.jems.gengarbot.PokemonListEntry;
+import bond.jems.gengarbot.*;
+import com.github.oscar0812.pokeapi.models.pokemon.Pokemon;
 import com.github.oscar0812.pokeapi.utils.Client;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -122,12 +120,6 @@ public class BotCommands extends ListenerAdapter {
             // Congratulations! You caught a level ?? <name>! (Added to Pokedex.)
             // TODO: calculate levels properly on-catch, and display them in the catch message.
 
-        } else if (event.getName().equals("info")) {
-            /*
-            Eventually, this will be "info latest", to show the latest one, or "info <number>" to get a specific one
-            Or just "info" to get your buddy pokemon. For now, it just gets the latest.
-             */
-
         } else if (event.getName().equals("pokemon")) {
             OptionMapping page = event.getOption("page");
             int pageNumber;
@@ -185,6 +177,87 @@ public class BotCommands extends ListenerAdapter {
             } else {
                 event.reply("Couldn't set your buddy :(").queue();
             }
+        } else if (event.getName().equals("info")) {
+            OptionMapping pokemonID = event.getOption("id");
+            double id = pokemonID.getAsDouble();
+            String discordID = event.getUser().getId();
+
+            CaughtPokemon pokemon = DBHandler.getPokemonInfo(id, discordID);
+
+            if (pokemon == null) {
+                event.reply("That pokemon isn't yours! (Or it doesn't exist)").queue();
+                return;
+            }
+
+            event.deferReply().queue();
+
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setColor(Color.MAGENTA.darker());
+            String shinyString;
+            if (pokemon.isShiny()) {
+                shinyString = "✨ Level ";
+            } else {
+                shinyString = "Level ";
+            }
+
+            if (pokemon.getNickname() == null) {
+                embedBuilder.setTitle(shinyString + pokemon.getLevel() + " " + pokemon.getName());
+            } else {
+                embedBuilder.setTitle(shinyString + pokemon.getLevel() + " " + pokemon.getNickname());
+            }
+
+            Pokemon pokemonInfo = Pokemon.getById(pokemon.getDexNumber());
+            String typeString;
+            try {
+                String type1 = pokemonInfo.getTypes().get(0).getType().getName();
+                type1 = type1.substring(0, 1).toUpperCase() + type1.substring(1);
+
+                String type2 = pokemonInfo.getTypes().get(1).getType().getName();
+                type2 = type2.substring(0, 1).toUpperCase() + type2.substring(1);
+                typeString = type1 + " | " + type2;
+
+            } catch (IndexOutOfBoundsException e) {
+                String type = pokemonInfo.getTypes().get(0).getType().getName();
+                typeString = type.substring(0, 1).toUpperCase() + type.substring(1);
+            }
+
+            String natureString;
+            if (pokemon.getMintedNature() != null) {
+                natureString = pokemon.getMintedNature() + "(originally " + pokemon.getNature() + ")";
+            } else {
+                natureString = pokemon.getNature();
+            }
+
+
+            // TODO: make this take nature into account for stat calculation right here
+            // TODO: show total IV % here
+            String description = "**XP:** " + pokemon.getXp() + "\n" +
+                    "**Types:** " + typeString + "\n" +
+                    "**Nature:** " + natureString + "\n" +
+                    "**HP:** " + PokemonInfoCalculator.calculateHPStat(pokemonInfo.getStats().get(0).getBaseStat(),
+                    pokemon.getHpIV(), pokemon.getHpEV(), pokemon.getLevel()) + " - IV: " + pokemon.getHpIV() + "/31\n" +
+                    "**Attack:** " + PokemonInfoCalculator.calculateStat(pokemonInfo.getStats().get(1).getBaseStat(),
+                    pokemon.getAttackIV(), pokemon.getAttackEV(), pokemon.getLevel(), false, false) +
+                    " - IV: " + pokemon.getAttackIV() + "/31\n" +
+                    "**Defense:** " + PokemonInfoCalculator.calculateStat(pokemonInfo.getStats().get(1).getBaseStat(),
+                    pokemon.getDefenseIV(), pokemon.getDefenseEV(), pokemon.getLevel(), false, false) +
+                    " - IV: " + pokemon.getDefenseIV() + "/31\n" +
+                    "**Sp.Atk:** " + PokemonInfoCalculator.calculateStat(pokemonInfo.getStats().get(1).getBaseStat(),
+                    pokemon.getSpAtkIV(), pokemon.getSpAtkEV(), pokemon.getLevel(), false, false) +
+                    " - IV: " + pokemon.getSpAtkIV() + "/31\n" +
+                    "**Sp.Def:** " + PokemonInfoCalculator.calculateStat(pokemonInfo.getStats().get(1).getBaseStat(),
+                    pokemon.getSpDefIV(), pokemon.getSpDefEV(), pokemon.getLevel(), false, false) +
+                    " - IV: " + pokemon.getSpDefIV() + "/31\n" +
+                    "**Speed:** " + PokemonInfoCalculator.calculateStat(pokemonInfo.getStats().get(1).getBaseStat(),
+                    pokemon.getSpeedIV(), pokemon.getSpeedEV(), pokemon.getLevel(), false, false) +
+                    " - IV: " + pokemon.getSpeedIV() + "/31\n";
+
+                    String paddedDexNumber = String.format("%03d", pokemon.getDexNumber());
+            String imageLink = "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/" + paddedDexNumber + ".png";
+            embedBuilder.setImage(imageLink);
+            embedBuilder.setDescription(description);
+            event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
+
         }
     }
 }

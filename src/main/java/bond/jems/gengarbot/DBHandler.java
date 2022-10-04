@@ -212,8 +212,8 @@ public class DBHandler {
                         rs.getInt("timeCaught"), rs.getInt("dexNumber"), rs.getString("specialForm"),
                         rs.getString("nickname"), rs.getInt("level"), rs.getInt("xp"),
                         rs.getBoolean("shiny"), rs.getString("nature"), newPokemonSex,
-                        rs.getString("ability"), rs.getString("holding"), rs.getBoolean("mega"),
-                        rs.getBoolean("megaY"), rs.getBoolean("gMax"), rs.getString("terraType"),
+                        rs.getString("ability"), rs.getString("holding"),
+                        rs.getBoolean("gMax"), rs.getString("terraType"),
                         rs.getInt("happiness"), rs.getString("characteristic"),
                         rs.getString("move1"), rs.getString("move2"), rs.getString("move3"),
                         rs.getString("move4"), rs.getInt("HPEV"), rs.getInt("AttackEV"),
@@ -339,6 +339,81 @@ public class DBHandler {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public static CaughtPokemon getPokemonInfo(double pokemonID, String discordID) {
+        try {
+            Connection connection = getDatabaseConnection();
+            Statement statement = connection.createStatement();
+            String query = "SELECT * FROM `Pokemon` WHERE `uniqueID` = '" + pokemonID + "' AND `trainerDiscordID` = '" + discordID + "'";
+            ResultSet rs = statement.executeQuery(query);
+
+            CaughtPokemon pokemon;
+            if (rs.next()) {
+                int uniqueID = rs.getInt("uniqueID");
+                String name = GengarBot.getPokemonNameByDexNumber(GengarBot.getPokemonNamesEn(), rs.getInt("dexNumber"));
+                String trainerDiscordID = rs.getString("trainerDiscordID");
+                String originalTrainerID = rs.getString("originalTrainerID");
+                int timeCaught = rs.getInt("timeCaught");
+                int dexNumber = rs.getInt("dexNumber");
+                String specialForm = rs.getString("specialForm");
+                String nickname = rs.getString("nickname");
+                int level = rs.getInt("level");
+                int xp = rs.getInt("xp");
+                boolean shiny = rs.getInt("shiny") == 1;
+                String nature = rs.getString("nature");
+                Sex sex;
+                if (rs.getInt("sex") == 1) {
+                    sex = Sex.FEMALE;
+                } else {
+                    sex = Sex.MALE;
+                }
+                String ability = rs.getString("ability");
+                String holding = rs.getString("holding");
+                boolean gMax = rs.getInt("gMax") == 1;
+                String terraType = rs.getString("terraType");
+                int happiness = rs.getInt("happiness");
+                String characteristic = rs.getString("characteristic");
+                String move1 = rs.getString("move1");
+                String move2 = rs.getString("move2");
+                String move3 = rs.getString("move3");
+                String move4 = rs.getString("move4");
+                int hpEV = rs.getInt("hpEV");
+                int attackEV = rs.getInt("attackEV");
+                int defenseEV = rs.getInt("defenseEV");
+                int spAtkEV = rs.getInt("spAtkEV");
+                int spDefEV = rs.getInt("spDefEV");
+                int speedEV = rs.getInt("speedEV");
+                int hpIV = rs.getInt("hpIV");
+                int attackIV = rs.getInt("attackIV");
+                int defenseIV = rs.getInt("defenseIV");
+                int spAtkIV = rs.getInt("spAtkIV");
+                int spDefIV = rs.getInt("spDefIV");
+                int speedIV = rs.getInt("speedIV");
+                boolean bottleCappedHP = rs.getInt("bottleCappedHP") == 1;
+                boolean bottleCappedAttack = rs.getInt("bottleCappedAttack") == 1;
+                boolean bottleCappedDefense = rs.getInt("bottleCappedDefense") == 1;
+                boolean bottleCappedSpAtk = rs.getInt("bottleCappedSpAtk") == 1;
+                boolean bottleCappedSpDef = rs.getInt("bottleCappedSpDef") == 1;
+                boolean bottleCappedSpeed = rs.getInt("bottleCappedSpeed") == 1;
+                String mintedNature = rs.getString("mintedNature");
+
+
+                pokemon = new CaughtPokemon(uniqueID, name, trainerDiscordID, originalTrainerID, timeCaught, dexNumber,
+                        specialForm, nickname, level, xp, shiny, nature, sex, ability, holding, gMax, terraType, happiness,
+                        characteristic, move1, move2, move3, move4, hpEV, attackEV, defenseEV, spAtkEV, spDefEV, speedEV,
+                        hpIV, attackIV, defenseIV, spAtkIV, spDefIV, speedIV, bottleCappedHP, bottleCappedAttack,
+                        bottleCappedDefense, bottleCappedSpAtk, bottleCappedSpDef, bottleCappedSpeed, mintedNature);
+                return pokemon;
+            } else {
+                // couldn't find the pokemon
+                return null;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

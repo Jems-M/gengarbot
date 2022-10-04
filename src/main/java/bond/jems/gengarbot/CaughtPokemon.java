@@ -69,7 +69,7 @@ public class CaughtPokemon {
     // complete constructor
     public CaughtPokemon(int uniqueID, String name, String trainerDiscordID, String originalTrainerID, int timeCaught,
                          int dexNumber, String specialForm, String nickname, int level, int xp, boolean shiny,
-                         String nature, Sex sex, String ability, String holding, boolean mega, boolean megaY, boolean gMax,
+                         String nature, Sex sex, String ability, String holding, boolean gMax,
                          String terraType, int happiness, String characteristic,
                          String move1, String move2, String move3, String move4,
                          int HPEV, int AttackEV, int DefenseEV, int SpAtkEV, int SpDefEV, int SpeedEV,
@@ -91,8 +91,6 @@ public class CaughtPokemon {
         this.sex = sex;
         this.ability = ability;
         this.holding = holding;
-        this.mega = mega;
-        this.megaY = megaY;
         this.gMax = gMax;
         this.terraType = terraType;
         this.happiness = happiness;

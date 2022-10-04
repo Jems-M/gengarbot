@@ -97,7 +97,7 @@ public class GengarBot {
                 .queue();
 
         jda.upsertCommand("info", "Display info on a pokemon.")
-                .addOption(OptionType.INTEGER, "page", "The pokemon who's info you want to view.", false)
+                .addOption(OptionType.INTEGER, "id", "The ID of the pokemon who's info you want to view", false)
                 .queue();
 
 
